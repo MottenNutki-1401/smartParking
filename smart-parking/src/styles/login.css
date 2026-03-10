@@ -1,0 +1,29 @@
+body{
+    background-color: #9fbb7f;
+    padding: 10px;
+    color: rgb(228, 10, 206);
+    min-height: 100vh;
+}
+
+.login-container,
+.Register-container {
+  width: 300px;
+  margin: 100px auto;
+  text-align: center;
+  color: #f200ff;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  padding: 8px;  
+  color: #000000;
+  background-color: #f200ff;
+}

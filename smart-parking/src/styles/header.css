@@ -1,0 +1,18 @@
+.header {
+  background-color: pink;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+}
+.sidebar-btn{
+  background-color: lightblue;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.header-text h1,
+.header-text p {
+  margin: 0;
+}
