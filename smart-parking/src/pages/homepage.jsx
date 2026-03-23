@@ -1,15 +1,20 @@
 import { useState } from "react";
 import "../styles/homepage.css"
 import Header from "../assets/components/header.jsx";
+import ParkingSlots from "./parkingslots.jsx";
 
 function Homepage() {
   return (
     <div className="homepage-container">
-      <header />
-        <h1>Welcome to the Smart Parking System</h1>
-    </div>
-  );
-}
-
+      <Header />
+       
+     <div>
+           <ParkingSlots />
+     </div>
+        </div>
+    
+    );
+     
+  }
 
 export default Homepage;

@@ -1,0 +1,35 @@
+.parking-wrapper {
+  margin-top: 40px;
+   position: relative;
+ 
+.parking-grid {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(9, 140px);
+  gap: 30px;
+}
+
+.slot {
+  width: 140px;
+  height: 200px;
+  border: 2px solid #3b7571;
+  display: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+
+}
+
+/* empty slot */
+.slot.available {
+  background: #dff6dd;
+}
+
+/* occupied slot */
+.slot.occupied {
+  background: #d9646d;
+}
