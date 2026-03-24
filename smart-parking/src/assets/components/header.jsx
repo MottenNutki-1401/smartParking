@@ -6,11 +6,10 @@ function Header({ toggleSidebar }) {
   
 
       <div className="header-text">
-      <h1>Smart Parking</h1>
-      <p>test meow hi hello</p>
+      <h1>BOOKING SLOTS</h1>
+     
       
       <button className="sidebar-btn" onClick={toggleSidebar}>
-       Open meow!
       </button>
     </div>
     </div>

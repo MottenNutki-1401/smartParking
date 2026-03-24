@@ -1,35 +1,51 @@
 .parking-wrapper {
-  margin-top: 40px;
+  margin-top: 70px;
    position: relative;
- 
+}
 .parking-grid {
   margin-top: 30px;
   display: grid;
   grid-template-columns: repeat(9, 140px);
   gap: 30px;
-}
 
+}
 .slot {
+
   width: 140px;
-  height: 200px;
-  border: 2px solid #3b7571;
-  display: column;
-  justify-content: center;
+  height: 180px;
+  border: 2px solid #efefef;
+  display: flex;
   align-items: center;
-  font-size: 40px;
-  padding: 10px;
-  border-radius: 10px;
+  justify-content: center;
+  border-radius: 5px;
 }
 
-
-}
-
-/* empty slot */
+/* available */
 .slot.available {
-  background: #dff6dd;
+  background-color: #d4f8d4;
 }
 
-/* occupied slot */
+/* occupied */
 .slot.occupied {
-  background: #d9646d;
+  background-color: #ffd6d6;
+}
+/* maintenance  */
+.slot.maintenance {
+  background-color: #fff3cd;
+}
+
+/* hover effect */
+.slot.occupied:hover {
+  background-color: #eb6161;
+  transition: background-color 0.3s ease;
+}
+.slot.available:hover {
+  background-color: #ddff76;
+  transition: background-color 0.3s ease;
+  transform: scale(1.10);
+}
+.slot.maintenance:hover {
+  background-color: #ff7543;
+  transition: background-color 0.3s ease;
+  
 }
