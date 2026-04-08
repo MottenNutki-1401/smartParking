@@ -1,32 +1,42 @@
-// i organized everything as whole
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
 import Homepage from "./pages/homepage.jsx";
-import Booking from "./pages/booking.jsx";
+import Booking from "./pages/booking";
 
-function App() {
-  const [page, setPage] = useState("login");
-
-  return (
-    <>
-      {page === "login" && (
-        <Login
-             onLogin={() => setPage("home")} 
-             onShowRegister={() => setPage("register")}
-        />
-      )}
-
-        {page === "register" && (
-         <Register onRegister={() => setPage("login")} />
-      )}
-
-      {page === "home" &&  (
-      <Homepage goToBooking={() => setPage("Booking")} />
-      )}
-    </>
-    
-  );
+function ProtectedRoute({ children }) {
+  const isAuth = localStorage.getItem("user");
+ 
+ return children; //remove an replace when done testing
+  // return isAuth ? children : <Navigate to="/" />;
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Homepage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/booking"
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+}
