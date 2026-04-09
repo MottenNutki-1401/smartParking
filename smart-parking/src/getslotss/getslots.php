@@ -23,3 +23,4 @@ echo json_encode($slots);
 
 $conn->close();
 ?>
+// MOVE MEEE

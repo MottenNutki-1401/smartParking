@@ -1,18 +1,29 @@
 import "../../styles/header.css";
+import { useState } from "react";
+import ProfileModal from "../../pages/profile";
 
 function Header({ toggleSidebar }) {
-  return (
-    <div className="header">
-  
+  const [showProfile, setShowProfile] = useState(false);
 
-      <div className="header-text">
-      <h1>BOOKING SLOTS</h1>
-     
-      
-      <button className="sidebar-btn" onClick={toggleSidebar}>
-      </button>
-    </div>
-    </div>
+  return (
+    <>
+      <div className="header">
+        <div className="header-text">
+          <h1>BOOKING SLOTS</h1>
+
+         
+              <button
+                className="sidebar-btn"
+                onClick={() => setShowProfile(true)} > </button>
+            </div>
+          </div>
+
+      <ProfileModal
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
+      />
+    </>
   );
 }
+
 export default Header;

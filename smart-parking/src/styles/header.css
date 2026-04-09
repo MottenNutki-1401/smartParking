@@ -1,14 +1,12 @@
 .header {
-  background-color: pink;
+  background-color: #000000;
   padding: 15px 20px;
+  border: 1px solid #efefef;
   display: flex;
   align-items: center;
   gap: 15px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  
+
+  margin: 20px 20px; /* top/bottom, left/right */
 }
 
 .header-text h1,
@@ -28,7 +26,69 @@
   position: absolute;
   right: 10px; 
   top: 10px;
+  background-color: #e1de22;
 }
 .profile-btn:hover {
   background-color: #000000;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  min-width: 300px;
+}
+
+.modal {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.delete-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: 1px solid #efefef;
+  padding: 10px 20px;
+  border-radius: 5px;
+  
+}
+
+.logout-btn {
+  background-color: #000000;
+  border: 1px solid #efefef;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.btngrp {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin: 20px;
+  cursor: pointer;
 }

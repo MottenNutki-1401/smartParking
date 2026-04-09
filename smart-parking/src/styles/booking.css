@@ -1,5 +1,5 @@
 .header {
-  background-color: pink;
+  background-color: rgb(14, 13, 13);
   padding: 15px 20px;
   display: flex;
   align-items: center;
@@ -32,3 +32,4 @@
 .profile-btn:hover {
   background-color: #000000;
 }
+
