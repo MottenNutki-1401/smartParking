@@ -1,0 +1,12 @@
+#apache rewrite engine=on
+RewriteEngine On
+
+
+#if req file !exist
+RewriteCond %{REQUEST_FILENAME} !-f
+
+#if req folder !exist
+RewriteCond %{REQUEST_FILENAME} !-d
+
+#redirect everything to main
+RewriteRule ^(.*)$ main.php [QSA, L]
