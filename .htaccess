@@ -1,6 +1,9 @@
 #apache rewrite engine=on
 RewriteEngine On
 
+# Set base path (IMPORTANT for subfolder projects)
+RewriteBase /smp_backend/
+
 
 #if req file !exist
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -8,5 +11,5 @@ RewriteCond %{REQUEST_FILENAME} !-f
 #if req folder !exist
 RewriteCond %{REQUEST_FILENAME} !-d
 
-#redirect everything to main
-RewriteRule ^(.*)$ main.php [QSA, L]
+#redirect everything to main, deleted qsa=it worked
+RewriteRule ^(.*)$ main.php [L] 
