@@ -111,7 +111,7 @@ function verifyJWT() {
 
         return $decoded->data;
 
-    } catch (Exception $e) {
+    } catch (Exception $e) {//
         errorResponse("Invalid or expired token", 401);
     }
 }
