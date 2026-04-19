@@ -1,0 +1,15 @@
+{
+    "name": "gail/smp_backend",
+    "autoload": {
+        "psr-4": {
+            "Gail\\SmpBackend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MottenNutki-1401",
+            "email": "202310763@gordoncollege.edu.ph"
+        }
+    ],
+    "require": {}
+}

@@ -1,77 +1,119 @@
 <?php 
 
-//error response action json=> goal make GET/api/parking-slots work
+// Load Composer libraries (JWT)
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 
 function errorResponse($message, $statusCode = 400) {
     http_response_code($statusCode);
 
-    echo json_encode ([
-        "status" => "errawr!",
+    echo json_encode([
+        "status" => "error",
         "message" => $message
     ]);
 
-    exit; //stop script execution
+    exit; 
 }
 
-//input json from request body
-function getjsoninput() {
-    return json_decode (file_get_contents("php://input"), true);
+
+
+function getJsonInput() {
+    return json_decode(file_get_contents("php://input"), true);
 }
 
-//datase connection PDO
 
+//db connection = pdo
 function getPDO() {
-    //read .env file 
+
+    // read .env file
     $env = parse_ini_file(__DIR__ . '/config/.env');
 
-    //datasource name(connection string)
+    // connection string
     $dsn = "mysql:host={$env['SERVER01']};dbname={$env['DATABASE']};charset={$env['CHARSET']}";
 
- try {
-        // Create PDO connection object
+    try {
         $pdo = new PDO($dsn, $env['DBUSER'], $env['PASSWORD']);
 
-        // Set error mode to exceptions (better debugging)
+        // show errors 
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        return $pdo; // return connection
+        return $pdo;
 
     } catch (PDOException $e) {
-
-        // If connection fails
         errorResponse("Database connection failed", 500);
     }
 }
 
-function execQuery($sql, $params, $pdo){
 
-    $data = []; // store results
+function execQuery($sql, $params, $pdo) {
 
-    // Prepare SQL query (prevents SQL injection 🔐)
+    $data = [];
+
     $stmt = $pdo->prepare($sql);
 
     try {
-        // Execute query with parameters
-        // Example: WHERE id = ?
         $stmt->execute($params);
 
-        // Check if query returned rows
-        if($stmt->rowCount() > 0 ) {
-
-            // fetchAll() → get all rows as array
-            if($res = $stmt->fetchAll()) {
+        if ($stmt->rowCount() > 0) {
+            if ($res = $stmt->fetchAll()) {
                 $data = $res;
             }
         }
 
-        // Free database resources
         $stmt->closeCursor();
 
     } catch (\Throwable $th) {
-
-        // If error happens during query
         http_response_code(403);
     }
 
-    return $data; // return result
+    return $data;
+}
+
+function generateJWT($user) {
+
+    $secret_key = "SUPER_SECRET_KEY_123";
+
+    $payload = [
+        "iss" => "localhost",
+        "aud" => "smp_backend",
+        "iat" => time(),
+        "exp" => time() + 3600, // 1 hour expiration
+        "data" => [
+            "id" => $user['id'],
+            "role" => $user['role']
+        ]
+    ];
+
+    return JWT::encode($payload, $secret_key, 'HS256');
+}
+
+
+// ==============================
+// 🔐 VERIFY JWT (FOR PROTECTED ROUTES)
+// ==============================
+function verifyJWT() {
+
+    $secret_key = "SUPER_SECRET_KEY_123";
+
+    $headers = getallheaders();
+
+    // Check if Authorization header exists
+    if (!isset($headers['Authorization'])) {
+        errorResponse("No token provided", 401);
+    }
+
+    // Remove "Bearer " from token
+    $token = str_replace("Bearer ", "", $headers['Authorization']);
+
+    try {
+        $decoded = JWT::decode($token, new Key($secret_key, 'HS256'));
+
+        return $decoded->data;
+
+    } catch (Exception $e) {
+        errorResponse("Invalid or expired token", 401);
+    }
 }

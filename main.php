@@ -22,9 +22,8 @@ $request = str_replace('/smp_backend', '', $request);
 $request = strtok($request, '?');
 
 
-// ==========================
+
 // ROUTING
-// ==========================
 
 // If user requests: GET /api/parking-slots
 if ($request === '/api/parking-slots' && $method === 'GET') {
