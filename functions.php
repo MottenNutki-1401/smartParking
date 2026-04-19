@@ -91,9 +91,7 @@ function generateJWT($user) {
 }
 
 
-// ==============================
-// 🔐 VERIFY JWT (FOR PROTECTED ROUTES)
-// ==============================
+//verify jwt (protected routes)
 function verifyJWT() {
 
     $secret_key = "SUPER_SECRET_KEY_123";
