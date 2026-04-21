@@ -35,6 +35,17 @@ if ($request === '/api/parking-slots' && $method === 'GET') {
     (new ParkingSlotController())->index();
 }
 
+//login route
+elseif ($request === '/api/login' && $method === 'POST') {
+
+//from login logic
+require_once 'controllers/AuthController.php';
+
+//call function (login)
+(new AuthController () )-> login ();
+}
+
+
 
 // If no route matches
 else {

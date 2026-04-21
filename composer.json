@@ -11,5 +11,7 @@
             "email": "202310763@gordoncollege.edu.ph"
         }
     ],
-    "require": {}
+    "require": {
+        "firebase/php-jwt": "^7.0"
+    }
 }

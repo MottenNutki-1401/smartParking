@@ -74,7 +74,7 @@ function execQuery($sql, $params, $pdo) {
 
 function generateJWT($user) {
 
-    $secret_key = "SUPER_SECRET_KEY_123";
+    $secret_key = "SUPER_SECRET_KEY_123_VERY_SECRET_IWONT_TELL";
 
     $payload = [
         "iss" => "localhost",
