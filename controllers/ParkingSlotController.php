@@ -9,8 +9,8 @@ class ParkingSlotController {
         // Get database connection
         $pdo = getPDO();
 
-        // SQL query
-        $sql = "SELECT * FROM parking_slots";
+        // sql procedure
+        $sql = "CALL get_pslots()";
 
         // No parameters needed
         $params = [];
