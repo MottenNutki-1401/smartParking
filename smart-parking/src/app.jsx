@@ -1,21 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
 import Homepage from "./pages/homepage.jsx";
-import Booking from "./pages/booking";
+import Booking from "./pages/booking.jsx";
+import AdminLoginModal from "./pages/adminmodal.jsx";
+import Dashboard from "./pages/dashboard.jsx";
+
 
 function ProtectedRoute({ children }) {
   const isAuth = localStorage.getItem("user");
- 
- return children; //remove an replace when done testing
-  // return isAuth ? children : <Navigate to="/" />;
+
+  return isAuth ? children : <Navigate to="/" />;
+}
+
+function AdminRoute({ children }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  return user?.role === "admin"
+    ? children
+    : <Navigate to="/home" />;
 }
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -36,6 +47,17 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* ADMIN ROUTE */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );

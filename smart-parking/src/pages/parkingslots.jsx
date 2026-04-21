@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "../styles/parking.css";
 import topview from "../assets/topview.png";
+import Receipt from "../assets/components/receipt.jsx";
+import "../styles/receipt.css";
 
 function ParkingSlots() {
   const currentUser = "user";
@@ -9,9 +11,10 @@ function ParkingSlots() {
   const [tick, setTick] = useState(0);
 
   const [extendHours, setExtendHours] = useState(0);
-  const ratePerHour = 20; // ₱20/hr (change if u want)
-  
-  const [showPayment, setShowPayment] = useState(false);
+  const ratePerHour = 35; 
+
+ const [receipt, setReceipt] = useState(null);
+
   
   const [timeIn, setTimeIn] = useState("");
   const [timeOut, setTimeOut] = useState("");
@@ -89,6 +92,28 @@ function ParkingSlots() {
     return "";
   };
 
+const calculatePrice = (timeIn, timeOut) => {
+  if (!timeIn || !timeOut) return 0;
+
+  const [inH, inM] = timeIn.split(":").map(Number);
+  const [outH, outM] = timeOut.split(":").map(Number);
+
+  const start = new Date();
+  start.setHours(inH, inM, 0);
+
+  const end = new Date();
+  end.setHours(outH, outM, 0);
+
+  if (end <= start) {
+    end.setDate(end.getDate() + 1);
+  }
+
+  const diff = end - start;
+  const hours = diff / (1000 * 60 * 60);
+
+  return Math.ceil(hours) * ratePerHour;
+};
+
   const handleBooking = () => {
     const updated = slots.map((s) =>
       s.id === selectedSlot.id
@@ -103,11 +128,36 @@ function ParkingSlots() {
     );
 
     setSlots(updated);
+
+    setReceipt({
+  name: currentUser,
+  slotId: selectedSlot.id,
+  timeIn,
+  timeOut,
+  price: calculatePrice(timeIn, timeOut),
+  date: new Date().toLocaleString()
+              });
+  const existing = JSON.parse(localStorage.getItem("transactions")) || [];
+      localStorage.setItem(
+        "transactions",
+        JSON.stringify([
+          ...existing,
+          {
+            name: currentUser,
+            slotId: selectedSlot.id,
+            timeIn,
+            timeOut,
+            price: calculatePrice(timeIn, timeOut),
+            date: new Date().toLocaleDateString()
+          }
+        ])
+      );
+
     setSelectedSlot(null);
   };
 
-    const getRemainingSeconds = (slot) => {
-      if (!slot.timeOut) return 0;
+   const getRemainingSeconds = (slot) => {
+  if (!slot || !slot.timeOut) return 0;
 
       const now = new Date();
       const [h, m] = slot.timeOut.split(":");
@@ -128,7 +178,6 @@ function ParkingSlots() {
       return `${h}:${m}:${s}`;
     };
     
-    tick;
   
     return (
     <div className="parking-wrapper">
@@ -140,24 +189,24 @@ function ParkingSlots() {
 
           return (
             <div key={index} className="parking-row">
-              {item.slots.map((slotId, i) => {
-                if (slotId === null)
-                  return <div key={i} className="gap" />;
+                      {item.slots.map((slotId, i) => {
+              if (slotId === null)
+                return <div key={`gap-${index}-${i}`} className="gap" />;
 
-                const slot = slots.find((s) => s.id === slotId);
+              const slot = slots.find((s) => s.id === slotId);
 
-                return (
-                  <div
-                    key={slot.id}
-                    className={`slot ${getStatusClass(slot.status)} ${
-                      slot.bookedBy === currentUser ? "mine" : ""
-                    }`}
-                    onClick={() => setSelectedSlot(slot)}
-                  >
-                    {getContent(slot.status)}
-                  </div>
-                );
-              })}
+              return (
+                <div
+                  key={`${index}-${i}-${slot.id}`}
+                  className={`slot ${getStatusClass(slot.status)} ${
+                    slot.bookedBy === currentUser ? "mine" : ""
+                  }`}
+                  onClick={() => setSelectedSlot(slot)}
+                >
+                  {getContent(slot.status)}
+                </div>
+              );
+            })}
             </div>
           );
         })}
@@ -171,7 +220,7 @@ function ParkingSlots() {
 
             <div className="slotnum">
               {selectedSlot.timeIn && selectedSlot.timeOut
-                ? getRemainingTime(selectedSlot)
+                ? formatTime(getRemainingSeconds(selectedSlot))
                 : `Slot #${selectedSlot.id}`}
             </div>
 
@@ -180,19 +229,25 @@ function ParkingSlots() {
               <>
                 <p>Select time:</p>
 
-                <label>Time In</label>
-                <input
-                  type="time"
-                  value={timeIn}
-                  onChange={(e) => setTimeIn(e.target.value)}
-                />
+             <div className="time-group">
+  <div>
+    <p>Time In</p>
+    <input
+      type="time"
+      value={timeIn}
+      onChange={(e) => setTimeIn(e.target.value)}
+    />
+  </div>
 
-                <label>Time Out</label>
-                <input
-                  type="time"
-                  value={timeOut}
-                  onChange={(e) => setTimeOut(e.target.value)}
-                />
+  <div>
+    <p>Time Out</p>
+    <input
+      type="time"
+      value={timeOut}
+      onChange={(e) => setTimeOut(e.target.value)}
+    />
+  </div>
+</div>
 
                 <button onClick={handleBooking}>Confirm Booking</button>
               </>
@@ -202,8 +257,8 @@ function ParkingSlots() {
         {selectedSlot.status === "occupied" &&
  selectedSlot.bookedBy === currentUser && (() => {
   
-  const seconds = getRemainingSeconds(selectedSlot);
-  const display = formatTime(seconds);
+const seconds = getRemainingSeconds(selectedSlot);
+const display = formatTime(seconds);
   const billing = extendHours * ratePerHour;
 
   return (
@@ -226,36 +281,89 @@ function ParkingSlots() {
 
         <div className="btn-group">
 
-                      <button onClick={() => setShowPayment(true)}>
-                        EXTEND
-                      </button>
+       <button
+        onClick={() => {
+        const updated = slots.map((s) => {
+          if (s.id !== selectedSlot.id) return s;
 
-                      <button
-                        onClick={() => {
-                          const updated = slots.map((s) =>
-                            s.id === selectedSlot.id
-                              ? { ...s, status: "available", bookedBy: null, timeIn: null, timeOut: null }
-                              : s
-                          );
-                          setSlots(updated);
-                          setSelectedSlot(null);
-                        }}
-                      >
-                        END TIME
-                      </button>
+          if (!s.timeOut) return s; // 🛑 FIX HERE
 
-                    </div>
-                  </>
-                );
-              })()}
+          const now = new Date();
+          const [h, m] = s.timeOut.split(":");
 
+          const end = new Date();
+          end.setHours(Number(h));
+          end.setMinutes(Number(m));
+
+          const base = end > now ? end : now;
+          base.setHours(base.getHours() + extendHours);
+
+          const newTimeOut = `${String(base.getHours()).padStart(2, "0")}:${String(
+            base.getMinutes()
+          ).padStart(2, "0")}`;
+
+          setReceipt({
+            name: currentUser,
+            slotId: s.id,
+            timeIn: s.timeIn,
+            timeOut: newTimeOut,
+            price: extendHours * ratePerHour,
+            date: new Date().toLocaleString(),
+          });
+        const existing = JSON.parse(localStorage.getItem("transactions")) || [];
+
+        localStorage.setItem(
+          "transactions",
+          JSON.stringify([
+            ...existing,
+            {
+              name: currentUser,
+              slotId: s.id,
+              timeIn: s.timeIn,
+              timeOut: newTimeOut,
+              price: extendHours * ratePerHour,
+              date: new Date().toLocaleDateString()
+            }
+          ])
+        );
+        
+          return {
+            ...s,
+            timeOut: newTimeOut,
+          };
+        });
+
+        setSlots(updated);
+        setExtendHours(0);
+        setSelectedSlot(null);
+      }}
+      >
+  EXTEND
+</button>
+
+           <button
+            onClick={() => {
+            const updated = slots.map((s) =>
+           s.id === selectedSlot.id
+           ? { ...s, status: "available", bookedBy: null, timeIn: null, timeOut: null }
+           : s
+            );
+            setSlots(updated);
+             setSelectedSlot(null);
+               }}>
+             END TIME
+             </button>
+
+       </div>
+     </>
+   );
+})()}
 
             {/* OTHER */}
             {selectedSlot.status === "occupied" &&
               selectedSlot.bookedBy !== currentUser && (
                 <p>Slot #{selectedSlot.id} is already occupied</p>
               )}
-
 
             {/* MAINTENANCE */}
             {selectedSlot.status === "maintenance" && (
@@ -267,52 +375,18 @@ function ParkingSlots() {
         </div>
       )}
 
-      {/* 💸 GCASH POPUP */}
-      {showPayment && (
-        <div className="gcash-overlay">
-          <div className="gcash-modal">
-            <h2>GCash Payment</h2>
-            <p>Amount: ₱{extendHours * ratePerHour}</p>
+    
 
-            <button className="btn"
-              onClick={() => {
-                const updated = slots.map((s) => {
-                  if (s.id !== selectedSlot.id) return s;
-
-                  const now = new Date();
-                  const [h, m] = s.timeOut.split(":");
-
-                  const end = new Date();
-                  end.setHours(Number(h));
-                  end.setMinutes(Number(m));
-
-                  const base = end > now ? end : now;
-                  base.setHours(base.getHours() + extendHours);
-
-                  return {
-                    ...s,
-                    timeOut: `${String(base.getHours()).padStart(2, "0")}:${String(
-                      base.getMinutes()
-                    ).padStart(2, "0")}`,
-                  };
-                });
-
-                setSlots(updated);
-                setExtendHours(0);
-                setShowPayment(false);
-              }}
-            >
-              PAY
-            </button>
-
-            <button className="btn" onClick={() => setShowPayment(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+        {receipt && (
+  <Receipt 
+    receipt={receipt} 
+    onClose={() => setReceipt(null)} 
+  />
+)}
 
     </div>
+
+    
   );
 }
 

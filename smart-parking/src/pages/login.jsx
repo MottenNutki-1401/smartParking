@@ -8,6 +8,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const DEV_MODE = true;
+
+  // DEV ACCESS (instant admin login)
+  const handleDevAccess = () => {
+    localStorage.setItem("auth", "true");
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ role: "admin", email: "dev@admin.com" })
+    );
+
+    navigate("/home"); // 🔥 go straight to admin
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,24 +33,27 @@ function Login() {
 
       if (response.data.success) {
         localStorage.setItem("auth", "true");
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
         navigate("/home");
       } else {
         alert(response.data.message);
       }
     } catch (error) {
-      if (error.response) {
-        alert("Error: " + (error.response.data.message || error.response.statusText));
-      } else if (error.request) {
-        alert("No response from server");
-      } else {
-        alert("Error: " + error.message);
-      }
+      alert("Login error");
     }
   };
 
   return (
     <div className="login-container">
       <h1>P.Parkers</h1>
+
+      {/* 🔥 DEV BUTTON */}
+      {DEV_MODE && (
+        <button onClick={handleDevAccess} style={{ marginBottom: "10px" }}>
+          Dev Admin Access
+        </button>
+      )}
 
       <form onSubmit={handleSubmit}>
         <input
@@ -57,8 +73,7 @@ function Login() {
       </form>
 
       <p>
-        Don’t have an account?{" "}
-        <Link to="/register">Register</Link>
+        Don’t have an account? <Link to="/register">Register</Link>
       </p>
     </div>
   );

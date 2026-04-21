@@ -10,14 +10,14 @@ import ParkingSlots from "./parkingslots.jsx";
 function Homepage() {
   const navigate = useNavigate();
 
-  // 🔐 AUTH CHECK (your Home logic)
-  //useEffect(() => {
-  //  const isAuth = localStorage.getItem("auth");
+   //🔐 AUTH CHECK (your Home logic)
+  useEffect(() => {
+   const isAuth = localStorage.getItem("auth");
 
-  //  if (!isAuth) {
-   //   navigate("/");
-   // }
-  //}, [navigate]);  REMOVE COCOMMNET WHEN DONE TESTING
+    if (!isAuth) {
+      navigate("/");
+    }
+  }, [navigate]); 
    
 
   // 🚪 LOGOUT FUNCTION
@@ -29,11 +29,6 @@ function Homepage() {
   return (
     <div className="homepage-container">
       <Header />
-
-      {/* logout button added (you can style this later) */}
-      <button onClick={handleLogout} style={{ float: "right" }}>
-        Logout
-      </button>
 
       <div className="main-content">
         <ParkingSlots />
