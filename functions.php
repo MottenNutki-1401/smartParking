@@ -57,8 +57,9 @@ function execQuery($sql, $params, $pdo) {
     try {
         $stmt->execute($params);
 
+        //PDO::FETCH_ASSOC => return column names only +no numeric indexes
         if ($stmt->rowCount() > 0) {
-            if ($res = $stmt->fetchAll()) {
+            if ($res = $stmt->fetchAll(PDO::FETCH_ASSOC)) {
                 $data = $res;
             }
         }
@@ -72,6 +73,8 @@ function execQuery($sql, $params, $pdo) {
     return $data;
 }
 
+
+//secret key encryption
 function generateJWT($user) {
 
     $secret_key = "SUPER_SECRET_KEY_123_VERY_SECRET_IWONT_TELL";
