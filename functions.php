@@ -92,7 +92,17 @@ function generateJWT($user) {
 
     return JWT::encode($payload, $secret_key, 'HS256');
 }
+function getAuthenticatedUser() {
+    $headers = getallheaders();
 
+    if (!isset($headers['Authorization'])) {
+        errorResponse("Unauthorized", 401);
+    }
+
+    $token = str_replace('Bearer ', '', $headers['Authorization']);
+
+    return verifyJWT($token);
+}
 
 //verify jwt (protected routes)
 function verifyJWT() {

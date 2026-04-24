@@ -7,10 +7,12 @@ class UserController {
 
     public function getProfile() {
 
-    if (!isset ($_SESSION ['user_id'])) {
-      errorResponse ("Unauthorized User", 401);
-    } 
-    
+     // Get logged-in user from JWT
+    $user = getAuthenticatedUser();
+
+    //Extract user_id from token
+    $user_id = $user->data->id;
+
     $pdo = getPDO ();
 
     //CALL PROCEDURE
@@ -32,40 +34,33 @@ class UserController {
 
     //update profile put endpoint /user/profile
 
-    public function updateProfile () {
-         if (!isset($_SESSION['user_id'])) {
-            errorResponse("Unauthorized", 401);
-        }
-        $input = getJsonInput();
+    public function updateProfile() {
 
-        //update....
-        $name = $input ['full_name'] ?? null ;
-         $password = $input['password'] ?? null;
+    $user = getAuthenticatedUser();
+    $user_id = $user->data->id;
+    $data = getJsonInput();
+    $pdo = getPDO();
 
-        // validation
-        if ($name === null && $password === null) {
-            errorResponse("Nothing to update", 400);
-        }
+    $name = $data['full_name'] ?? null;
+    $password = $data['password'] ?? null;
 
-        //  hash password if provided
-        if ($password !== null) {
-            $password = password_hash($password, PASSWORD_DEFAULT);
-        }
-
-        $pdo = getPDO();
-
-        $sql = "CALL update_user_profile(?, ?, ?)";
-        $params = [
-            $_SESSION['user_id'],
-            $name,
-            $password
-        ];
-
-        execQuery($sql, $params, $pdo);
-
-        echo json_encode([
-            "status" => "success",
-            "message" => "Profile updated"
-        ]);
+    // If password exists =hash 
+    if (!empty($password)) {
+        $password = password_hash($password, PASSWORD_DEFAULT);
+    } else {
+        $password = null; // important for SQL IF logic
     }
+
+    // Call procedure
+    $sql = "CALL update_user_profile(?, ?, ?)";
+    $params = [$user_id, $name, $password];
+
+    execQuery($sql, $params, $pdo);
+
+    // Response
+    echo json_encode([
+        "status" => "success",
+        "message" => "Profile updated successfully"
+            ]);
+        }
     }
