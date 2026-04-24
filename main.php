@@ -10,7 +10,7 @@ require_once 'functions.php';
 // Get request URL (e.g., /api/parking-slots)
 $request = $_SERVER['REQUEST_URI'];
 
-// Get request method (GET, POST, etc.)
+// Get request method (GET, POST, etc.)1
 $method = $_SERVER['REQUEST_METHOD'];
 
 
@@ -45,7 +45,18 @@ require_once 'controllers/AuthController.php';
 (new AuthController () )-> login ();
 }
 
+//profile get
+elseif ($request === '/api/users/profile' && $method === 'GET') {
+        require_once 'controllers/UserController.php';
 
+        (new UserController()) -> getProfile(); 
+}
+//profile PUT
+elseif ($request === '/api/users/profile' && $method === 'PUT') {
+        require_once 'controllers/UserController.php';
+
+        (new UserController()) -> updateProfile(); 
+}
 
 // If no route matches
 else {
