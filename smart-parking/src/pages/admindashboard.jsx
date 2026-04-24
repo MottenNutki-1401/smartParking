@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../styles/admin.css";
 import topview from "../assets/topview2.png";
 import RevenueReport from "../assets/components/revenuereport";
+import vector from "../assets/vector.svg";
 
 function AdminDashboard() {
   const [savedSlots, setSavedSlots] = useState([]);
@@ -74,6 +75,8 @@ function AdminDashboard() {
 
   return (
     <div className="parking-wrapper">
+
+  <img src={vector} className="vector" alt="yellow" /> 
 
       <RevenueReport />
 

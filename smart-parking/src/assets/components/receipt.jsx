@@ -1,3 +1,6 @@
+
+
+
 function Receipt({ receipt, onClose }) {
   if (!receipt) return null;
 
@@ -15,7 +18,9 @@ function Receipt({ receipt, onClose }) {
   return (
     <div className="receipt-overlay" onClick={onClose}>
       <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
-
+       
+     
+       
         <h2>Receipt</h2>
         <p><strong>Name:</strong> {receipt.name}</p>
         <p><strong>Slot ID:</strong> {receipt.slotId}</p>

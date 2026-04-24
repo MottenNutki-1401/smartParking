@@ -120,13 +120,14 @@
   width: 300px;
   text-align: center;
   border: 1px solid #efefef;
+  
 }
 
 .modal {
   background: black;
   border-radius: 20px;
   padding: 25px;
-  color: white;
+  color: rgb(255, 255, 255);
   width: 300px;
 }
 
@@ -138,6 +139,7 @@
   padding: 15px;
   margin-bottom: 20px;
   font-family: monospace;
+  
 }
 
 .modal input {
@@ -147,6 +149,8 @@
   border-radius: 8px;
   border: none;
   background: #ffffff;
+  color: #000000;
+  font-weight: bold;
 }
 
 .btn-group {
@@ -193,8 +197,10 @@
 .time-group {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin: 5px 0;
+  gap: 30px ;
+  margin: 5px 0; 
+ border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 .time-group div {
@@ -214,4 +220,29 @@
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  color: #000000;
+  font-weight: bold;
+}
+
+.vector {
+  position: absolute;
+  top: -50px;
+  left: -10px;
+}
+
+.btn3{
+ background: rgb(255, 255, 13);
+  border: 1px solid #000000;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: rgb(5, 4, 4);
+  
+   width: 100%;
+   margin-bottom: 10px;
+}
+.btn3:hover {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #ffffff;
 }

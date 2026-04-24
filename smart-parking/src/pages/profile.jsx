@@ -13,12 +13,16 @@ function ProfileModal({ isOpen, onClose }) {
         #{ParkingSlots.selectedSlot?.id}</p>
 
         <div className="btngrp">
+          
+          <button className="out" onClick={onClose}>
+        Logout </button> 
+
         <button className="delete-btn" onClick={onClose}>
-          Delete Account
-        </button>
-        <button className="logout-btn" onClick={onClose}>
-          Logout </button>
-      </div>
+          Delete Account </button>
+          
+        
+         </div>
+
         </div>
     </div>
   );

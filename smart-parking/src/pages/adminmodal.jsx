@@ -67,13 +67,13 @@ function AdminLoginModal({ isOpen, onClose }) {
         </button>
       )}
 
-      <input
-        placeholder="admin email"
+      <input className="in"
+        placeholder="admin "
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <input
+      <input  className="in"
         placeholder="password"
         type="password"
         value={password}
@@ -81,12 +81,15 @@ function AdminLoginModal({ isOpen, onClose }) {
       />
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <button onClick={handleLogin} disabled={loading}>
+     
+     
+       <div className="devgrp">
+      <button className="log" onClick={handleLogin} disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
 
-      <button onClick={onClose}>Close</button>
+      <button className="close" onClick={onClose}>Close</button>
+    </div>
     </div>
   </div>
 );

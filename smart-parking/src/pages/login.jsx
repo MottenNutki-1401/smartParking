@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/login.css";
+import car from "../assets/car.svg";
+import vector from "../assets/vector.svg";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -45,17 +47,27 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <h1>P.Parkers</h1>
+    
 
-      {/* 🔥 DEV BUTTON */}
+  <div className="login-page">
+
+  {/* DEV BUTTON */}
       {DEV_MODE && (
         <button onClick={handleDevAccess} style={{ marginBottom: "10px" }}>
           Dev Admin Access
         </button>
       )}
 
-      <form onSubmit={handleSubmit}>
+        <div className="illusion"></div>
+
+   <img src={car} className="car-bg" alt="car" />
+   <img src={vector} className="vector-bg" alt="yellow" /> 
+
+    <div className="login-container">
+
+      <h1>P.Parkers</h1>
+
+      <form onSubmit={handleSubmit} className="login-box">
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -69,12 +81,19 @@ function Login() {
           placeholder="Password"
         />
 
-        <button type="submit">Login</button>
+
+        <button className="btnbtn" type="submit">
+          Login
+        </button>
       </form>
 
       <p>
         Don’t have an account? <Link to="/register">Register</Link>
       </p>
+
+    
+    </div>
+
     </div>
   );
 }

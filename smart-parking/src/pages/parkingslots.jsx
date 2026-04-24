@@ -3,6 +3,7 @@ import "../styles/parking.css";
 import topview from "../assets/topview.png";
 import Receipt from "../assets/components/receipt.jsx";
 import "../styles/receipt.css";
+import vector from "../assets/vector.svg";
 
 function ParkingSlots() {
   const currentUser = "user";
@@ -180,7 +181,11 @@ const calculatePrice = (timeIn, timeOut) => {
     
   
     return (
+
     <div className="parking-wrapper">
+      
+        <img src={vector} className="vector" alt="yellow" /> 
+
       <div className="parking-lot">
         {layout.map((item, index) => {
           if (item.type === "road") {
@@ -219,9 +224,7 @@ const calculatePrice = (timeIn, timeOut) => {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
 
             <div className="slotnum">
-              {selectedSlot.timeIn && selectedSlot.timeOut
-                ? formatTime(getRemainingSeconds(selectedSlot))
-                : `Slot #${selectedSlot.id}`}
+             Slot #{selectedSlot.id}
             </div>
 
             {/* AVAILABLE */}
@@ -249,7 +252,9 @@ const calculatePrice = (timeIn, timeOut) => {
   </div>
 </div>
 
-                <button onClick={handleBooking}>Confirm Booking</button>
+                <button className="btn3" onClick={handleBooking}>
+                  Confirm Booking
+                </button>
               </>
             )}
 
@@ -286,7 +291,7 @@ const display = formatTime(seconds);
         const updated = slots.map((s) => {
           if (s.id !== selectedSlot.id) return s;
 
-          if (!s.timeOut) return s; // 🛑 FIX HERE
+          if (!s.timeOut) return s; //  FIX HERE
 
           const now = new Date();
           const [h, m] = s.timeOut.split(":");

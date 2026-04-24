@@ -6,7 +6,7 @@ import Homepage from "./pages/homepage.jsx";
 import Booking from "./pages/booking.jsx";
 import AdminLoginModal from "./pages/adminmodal.jsx";
 import Dashboard from "./pages/dashboard.jsx";
-
+import WelcomePage from "./pages/welc.jsx";
 
 function ProtectedRoute({ children }) {
   const isAuth = localStorage.getItem("user");
@@ -17,6 +17,8 @@ function ProtectedRoute({ children }) {
 function AdminRoute({ children }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
+
+  
   return user?.role === "admin"
     ? children
     : <Navigate to="/home" />;
@@ -29,6 +31,7 @@ export default function App() {
 
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/welcome" element={<WelcomePage />} />
 
         <Route
           path="/home"

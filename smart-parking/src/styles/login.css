@@ -1,31 +1,117 @@
 body{
     background-color: #090909;
-    padding: 10px;
+    padding: 15px;
     color: rgb(0, 0, 0);
-    min-height: 100vh;
+    min-height: 90vh;
 }
 
 .login-container,
 .Register-container {
-  width: 300px;
-  margin: 100px auto;
-  text-align: center;
-  color: #feefef;
-  padding: 20px;
-  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 52%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  height: 400px;
+  z-index: 1;
+ padding: 40px;
+  
 }
+
+
+.illusion{
+ position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+    height: 60%;
+    width: 25%;
+    max-width: 100%;  
+    z-index: 1;
+
+  background: rgba(221, 214, 214, 0.186);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.login-page {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.car-bg {
+  position: absolute;
+  top: 0;
+
+  width: 50%;
+  max-width: 100%;  
+
+  left: 10%;   /* move it left/right here */
+  transform: translateY(200px); /* 👈 moves DOWN */
+  z-index: 1;
+}
+
 
 input {
   display: block;
-  width: 100%;
+  width: 70%;
   margin: 10px 0;
-  padding: 8px;
+  border: 1px solid #ffffff7b;
+  background-color: #000000bd;
+  color: #fff5f5;
+  padding: 15px;
+   left: 20%; 
 }
 
 button {
   width: 100%;
   padding: 10px;
-  padding: 8px;  
   color: #fff5f5;
   background-color: #000000;
+  border-radius: 8px;
+
 }
+
+.btnbtn{
+  background: rgb(0, 0, 0);
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  margin-top: 10px;
+   margin-left: 50%;
+   width: 30%;
+}
+
+.btnbtn:hover {
+  background-color: #ffe100;
+   border: 1px solid #000000;
+  color: #000000;
+}
+
+.btnbtn2{
+  background: rgb(0, 0, 0);
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  margin-top: 10px;
+   margin-left: 40%;
+   width: 40%;
+}
+
+.btnbtn2:hover {
+  background-color: #ffe100;
+   border: 1px solid #000000;
+  color: #000000;
+}
+p, h1 {
+  margin-top: 10px;
+  color: #fff5f5;
+   margin-left: 7%;
+}
+

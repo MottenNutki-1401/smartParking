@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "../styles/login.css";
+import car from "../assets/car.svg";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -41,7 +42,15 @@ function Register() {
   };
 
   return (
+
+      <div className="login-page">
+
+    <div className="illusion"></div>
+
+       <img src={car} className="car-bg" alt="car" />
+
     <div className="Register-container">
+
       <h1>Create Account</h1>
 
       <form onSubmit={handleSubmit}>
@@ -49,12 +58,6 @@ function Register() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
-        />
-
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
         />
 
         <input
@@ -71,15 +74,20 @@ function Register() {
           placeholder="Confirm Password"
         />
 
-        <button type="submit">Create Account</button>
+        <button className="btnbtn2" type="submit">
+          Create Account
+        </button>
       </form>
 
       <p>
         Already have an account?{" "}
         <Link to="/">Login here</Link>
       </p>
+   </div>
+
     </div>
   );
 }
+
 
 export default Register;
