@@ -1,64 +1,152 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Start session (for login later)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 session_start();
 
-// Load helper functions
+
 require_once 'functions.php';
 
 
-// Get request URL (e.g., /api/parking-slots)
+//GET URL REQUEST
 $request = $_SERVER['REQUEST_URI'];
 
-// Get request method (GET, POST, etc.)1
+
+// GET, POST, PUT, DELETE
 $method = $_SERVER['REQUEST_METHOD'];
 
 
-// Remove project folder from URL
-// Example: /smp_backend/api/... → /api/...
+// /api/login
 $request = str_replace('/smp_backend', '', $request);
 
-// Remove query string (?id=1 etc.)
+// REMOVE QUERY STRINGS
+
 $request = strtok($request, '?');
 
 
 
-// ROUTING
+// ROUTES
 
-// If user requests: GET /api/parking-slots
+
+//PARKING SLOTS
 if ($request === '/api/parking-slots' && $method === 'GET') {
 
-    // Load controller file
     require_once 'controllers/ParkingSlotController.php';
 
-    // Call controller method
     (new ParkingSlotController())->index();
 }
 
-//login route
+
+
+//LOGIN
 elseif ($request === '/api/login' && $method === 'POST') {
 
-//from login logic
-require_once 'controllers/AuthController.php';
+    require_once 'controllers/AuthController.php';
 
-//call function (login)
-(new AuthController () )-> login ();
+    (new AuthController())->login();
 }
 
-//profile get
+
+
+//USER PROF
 elseif ($request === '/api/users/profile' && $method === 'GET') {
-        require_once 'controllers/UserController.php';
 
-        (new UserController()) -> getProfile(); 
+    require_once 'controllers/UserController.php';
+
+    (new UserController())->getProfile();
 }
-//profile PUT
+
+
+// UPDATE USER PROFILE
+// PUT /api/users/profile
 elseif ($request === '/api/users/profile' && $method === 'PUT') {
-        require_once 'controllers/UserController.php';
 
-        (new UserController()) -> updateProfile(); 
+    require_once 'controllers/UserController.php';
+
+    (new UserController())->updateProfile();
 }
 
-// If no route matches
+//BILLING
+elseif (
+    preg_match('#^/api/billings/([0-9]+)$#', $request, $matches)
+    && $method === 'GET'
+) {
+
+    require_once 'controllers/BillingController.php';
+
+    (new BillingController())->getBilling($matches[1]);
+}
+
+//BOOKING
+elseif (
+    $request === '/api/bookings'
+    &&
+    $method === 'POST'
+) {
+
+    require_once 'controllers/BookingController.php';
+
+    (new BookingController())->createBooking();
+}
+
+//ADMIN P-SLOTS
+elseif (
+    $request === '/api/admin/parking-slots'
+    &&
+    $method === 'GET'
+) {
+
+    require_once 'controllers/AdminController.php';
+
+    (new AdminController())
+        ->getParkingSlots();
+}
+
+//ADMIN BOOKINS
+elseif (
+    $request === '/api/admin/bookings'
+    &&
+    $method === 'GET'
+) {
+
+    require_once 'controllers/AdminController.php';
+
+    (new AdminController())
+        ->getBookings();
+}
+
+//ADMIN (REPORT OCCUPANCEY)
+elseif (
+    $request === '/api/reports/occupancy'
+    &&
+    $method === 'GET'
+) {
+
+    require_once 'controllers/ReportController.php';
+
+    (new ReportController())
+        ->getOccupancy();
+}
+
+//ADMIN REVENUE
+elseif (
+    $request === '/api/reports/revenue'
+    &&
+    $method === 'GET'
+) {
+
+    require_once 'controllers/ReportController.php';
+
+    (new ReportController())
+        ->getRevenue();
+}
 else {
+
     errorResponse("Route not found", 404);
 }

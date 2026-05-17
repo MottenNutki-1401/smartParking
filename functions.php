@@ -127,4 +127,86 @@ function verifyJWT() {
     } catch (Exception $e) {//
         errorResponse("Invalid or expired token", 401);
     }
+
+    //AES-256-GCM ENCRYPT
+    function encryptData($plainText) {
+
+    // encryption algorithm
+    $cipher = "aes-256-gcm";
+
+    // secret key (32 bytes)
+    $key = hex2bin(
+        $_ENV['ENCRYPTION_KEY']
+    );
+
+    // random IV
+    $iv = random_bytes(12);
+
+    // auth tag
+    $tag = "";
+
+    // encrypt
+    $encrypted = openssl_encrypt(
+
+        $plainText,
+
+        $cipher,
+
+        $key,
+
+        OPENSSL_RAW_DATA,
+
+        $iv,
+
+        $tag
+
+    );
+
+    return [
+
+        // base64 for database storage
+        "data" => base64_encode($encrypted),
+
+        "iv" => base64_encode($iv),
+
+        "tag" => base64_encode($tag)
+      ];
+    }
+
+    //decrypy
+            function decryptData($encryptedData, $iv, $tag) {
+
+            $cipher = "aes-256-gcm";
+
+            $key = hex2bin(
+                $_ENV['ENCRYPTION_KEY']
+            );
+
+            $decrypted = openssl_decrypt(
+
+                base64_decode($encryptedData),
+
+                $cipher,
+
+                $key,
+
+                OPENSSL_RAW_DATA,
+
+                base64_decode($iv),
+
+                base64_decode($tag)
+
+            );
+
+            // decryption failed
+            if ($decrypted === false) {
+
+                errorResponse(
+                    "Decryption failed",
+                    500
+                );
+            }
+
+            return $decrypted;
+        }
 }
