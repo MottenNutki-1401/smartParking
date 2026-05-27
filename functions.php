@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // Load Composer libraries (JWT)
 require_once __DIR__ . '/vendor/autoload.php';
@@ -7,66 +7,118 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 
+// JWT SECRET KEY
+define(
+    'JWT_SECRET',
+    'SUPER_SECRET_KEY_123_VERY_SECRET_IWONT_TELL'
+);
+
+
+
+
+// ERROR RESPONSE
 function errorResponse($message, $statusCode = 400) {
+
     http_response_code($statusCode);
 
     echo json_encode([
+
         "status" => "error",
+
         "message" => $message
     ]);
 
-    exit; 
+    exit;
 }
 
 
 
+
+// GET JSON INPUT
 function getJsonInput() {
-    return json_decode(file_get_contents("php://input"), true);
+
+    return json_decode(
+        file_get_contents("php://input"),
+        true
+    );
 }
 
 
-//db connection = pdo
+
+
+// DATABASE CONNECTION
 function getPDO() {
 
-    // read .env file
-    $env = parse_ini_file(__DIR__ . '/config/.env');
+    $env = parse_ini_file(
+        __DIR__ . '/config/.env'
+    );
 
-    // connection string
-    $dsn = "mysql:host={$env['SERVER01']};dbname={$env['DATABASE']};charset={$env['CHARSET']}";
+    $dsn =
+        "mysql:host={$env['SERVER01']};dbname={$env['DATABASE']};charset={$env['CHARSET']}";
 
     try {
-        $pdo = new PDO($dsn, $env['DBUSER'], $env['PASSWORD']);
 
-        // show errors 
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo = new PDO(
+
+            $dsn,
+
+            $env['DBUSER'],
+
+            $env['PASSWORD']
+        );
+
+        $pdo->setAttribute(
+            PDO::ATTR_ERRMODE,
+            PDO::ERRMODE_EXCEPTION
+        );
 
         return $pdo;
 
-    } catch (PDOException $e) {
-        errorResponse("Database connection failed", 500);
+    }
+
+    catch (PDOException $e) {
+
+        errorResponse(
+            "Database connection failed",
+            500
+        );
     }
 }
 
 
-function execQuery($sql, $params, $pdo) {
+
+
+// EXECUTE QUERY
+function execQuery(
+    $sql,
+    $params,
+    $pdo
+) {
 
     $data = [];
 
     $stmt = $pdo->prepare($sql);
 
     try {
+
         $stmt->execute($params);
 
-        //PDO::FETCH_ASSOC => return column names only +no numeric indexes
         if ($stmt->rowCount() > 0) {
-            if ($res = $stmt->fetchAll(PDO::FETCH_ASSOC)) {
+
+            if (
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC)
+            ) {
+
                 $data = $res;
             }
         }
 
         $stmt->closeCursor();
 
-    } catch (\Throwable $th) {
+    }
+
+    catch (\Throwable $th) {
+
         http_response_code(403);
     }
 
@@ -74,78 +126,117 @@ function execQuery($sql, $params, $pdo) {
 }
 
 
-//secret key encryption
+
+
+// GENERATE JWT
 function generateJWT($user) {
 
-    $secret_key = "SUPER_SECRET_KEY_123_VERY_SECRET_IWONT_TELL";
-
     $payload = [
+
         "iss" => "localhost",
+
         "aud" => "smp_backend",
+
         "iat" => time(),
-        "exp" => time() + 3600, // 1 hour expiration
+
+        "exp" => time() + 3600,
+
         "data" => [
+
             "id" => $user['id'],
+
             "role" => $user['role']
         ]
     ];
 
-    return JWT::encode($payload, $secret_key, 'HS256');
-}
-function getAuthenticatedUser() {
-    $headers = getallheaders();
-
-    if (!isset($headers['Authorization'])) {
-        errorResponse("Unauthorized", 401);
-    }
-
-    $token = str_replace('Bearer ', '', $headers['Authorization']);
-
-    return verifyJWT($token);
+    return JWT::encode(
+        $payload,
+        JWT_SECRET,
+        'HS256'
+    );
 }
 
-//verify jwt (protected routes)
+
+
+// VERIFY JWT
 function verifyJWT() {
 
-    $secret_key = "SUPER_SECRET_KEY_123";
-
     $headers = getallheaders();
 
-    // Check if Authorization header exists
-    if (!isset($headers['Authorization'])) {
-        errorResponse("No token provided", 401);
+    if (
+        !isset($headers['Authorization'])
+    ) {
+
+        errorResponse(
+            "No token provided",
+            401
+        );
     }
 
-    // Remove "Bearer " from token
-    $token = str_replace("Bearer ", "", $headers['Authorization']);
+    $token = str_replace(
+
+        "Bearer ",
+
+        "",
+
+        $headers['Authorization']
+    );
 
     try {
-        $decoded = JWT::decode($token, new Key($secret_key, 'HS256'));
+
+        $decoded = JWT::decode(
+
+            $token,
+
+            new Key(
+                JWT_SECRET,
+                'HS256'
+            )
+        );
 
         return $decoded->data;
 
-    } catch (Exception $e) {//
-        errorResponse("Invalid or expired token", 401);
     }
 
-    //AES-256-GCM ENCRYPT
-    function encryptData($plainText) {
+    catch (Exception $e) {
 
-    // encryption algorithm
-    $cipher = "aes-256-gcm";
+        errorResponse(
+            "Invalid or expired token",
+            401
+        );
+    }
+}
 
-    // secret key (32 bytes)
-    $key = hex2bin(
-        $_ENV['ENCRYPTION_KEY']
+
+
+
+// AUTHENTICATED USER
+function getAuthenticatedUser() {
+
+    return verifyJWT();
+}
+
+
+
+
+// AES-256-GCM ENCRYPT
+
+function encryptData($plainText) {
+
+    $env = parse_ini_file(
+        __DIR__ . '/config/.env'
     );
 
-    // random IV
+    $cipher = "aes-256-gcm";
+
+    $key = hex2bin(
+        $env['ENCRYPTION_KEY']
+    );
+
     $iv = random_bytes(12);
 
-    // auth tag
     $tag = "";
 
-    // encrypt
     $encrypted = openssl_encrypt(
 
         $plainText,
@@ -159,54 +250,63 @@ function verifyJWT() {
         $iv,
 
         $tag
-
     );
 
     return [
 
-        // base64 for database storage
-        "data" => base64_encode($encrypted),
+        "data" =>
+            base64_encode($encrypted),
 
-        "iv" => base64_encode($iv),
+        "iv" =>
+            base64_encode($iv),
 
-        "tag" => base64_encode($tag)
-      ];
+        "tag" =>
+            base64_encode($tag)
+    ];
+}
+
+
+
+
+// AES-256-GCM DECRYPT
+function decryptData(
+    $encryptedData,
+    $iv,
+    $tag
+) {
+
+    $env = parse_ini_file(
+        __DIR__ . '/config/.env'
+    );
+
+    $cipher = "aes-256-gcm";
+
+    $key = hex2bin(
+        $env['ENCRYPTION_KEY']
+    );
+
+    $decrypted = openssl_decrypt(
+
+        base64_decode($encryptedData),
+
+        $cipher,
+
+        $key,
+
+        OPENSSL_RAW_DATA,
+
+        base64_decode($iv),
+
+        base64_decode($tag)
+    );
+
+    if ($decrypted === false) {
+
+        errorResponse(
+            "Decryption failed",
+            500
+        );
     }
 
-    //decrypy
-            function decryptData($encryptedData, $iv, $tag) {
-
-            $cipher = "aes-256-gcm";
-
-            $key = hex2bin(
-                $_ENV['ENCRYPTION_KEY']
-            );
-
-            $decrypted = openssl_decrypt(
-
-                base64_decode($encryptedData),
-
-                $cipher,
-
-                $key,
-
-                OPENSSL_RAW_DATA,
-
-                base64_decode($iv),
-
-                base64_decode($tag)
-
-            );
-
-            // decryption failed
-            if ($decrypted === false) {
-
-                errorResponse(
-                    "Decryption failed",
-                    500
-                );
-            }
-
-            return $decrypted;
-        }
+    return $decrypted;
 }

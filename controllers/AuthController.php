@@ -10,15 +10,15 @@ class AuthController {
         $data = getJsonInput();
 
         //Validating input......
-        if (empty($data['full_name']) || empty($data['password'])) {
-            errorResponse("Full name and password are required", 400);
+        if (empty($data['username']) || empty($data['password'])) {
+            errorResponse("username and password are required", 400);
         }
 
         $pdo = getPDO();
 
         // Call stored procedure
         $sql = "CALL login_user(?)";
-        $result = execQuery($sql, [$data['full_name']], $pdo);
+        $result = execQuery($sql, [$data['username']], $pdo);
 
         if (empty($result)) {
             errorResponse("User not found", 404);
@@ -47,4 +47,68 @@ class AuthController {
             ]
        ]);
     }
+
+    // REGISTER USER
+    public function register() {
+
+        // get input
+        $data = getJsonInput();
+
+        // validation
+        if (
+            empty($data['full_name'])
+            ||
+            empty($data['username'])
+            ||
+            empty($data['password'])
+        ) {
+
+            errorResponse(
+                "Full name, username, and password are required",
+                400
+            );
+        }
+
+        $pdo = getPDO();
+
+        // hash password
+        $hashedPassword = password_hash(
+
+            $data['password'],
+
+            PASSWORD_DEFAULT
+        );
+
+        // default role
+        $role = "user";
+
+        // procedure
+        $sql = "CALL create_user(?, ?, ?, ?)";
+
+        $params = [
+
+            $data['full_name'],
+
+            $data['username'],
+
+            $hashedPassword,
+
+            $role
+        ];
+
+        execQuery(
+            $sql,
+            $params,
+            $pdo
+        );
+
+        // success response
+        echo json_encode([
+
+            "status" => "success",
+
+            "message" =>
+                "User registered successfully"
+            ]);
+        }
 }

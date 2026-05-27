@@ -3,64 +3,113 @@
 require_once 'functions.php';
 
 class UserController {
-    //get endpoint /user/profile
 
+    //get endpoint /user/profile
     public function getProfile() {
 
-     // Get logged-in user from JWT
-    $user = getAuthenticatedUser();
+        // Get logged-in user from JWT
+        $user = getAuthenticatedUser();
 
-    //Extract user_id from token
-    $user_id = $user->data->id;
+        // Extract user_id from token
+        $user_id = $user->id;
 
-    $pdo = getPDO ();
+        $pdo = getPDO();
 
-    //CALL PROCEDURE
-    $sql = "CALL get_user_by_id(?)";
-    $params = [$_SESSION ['user_id']];
+        // CALL PROCEDURE
+        $sql = "CALL get_user_by_id(?)";
 
-    $data = execQuery($sql, $params, $pdo);
+        // pass logged-in user id
+        $params = [$user_id];
 
-    if (empty($data)) {
-        errorResponse ("user not found", 404);
+        $data = execQuery(
+            $sql,
+            $params,
+            $pdo
+        );
+
+        // user not found
+        if (empty($data)) {
+
+            errorResponse(
+                "user not found",
+                404
+            );
+        }
+
+        // success response
+        echo json_encode([
+
+            "status" => "success",
+
+            "data" => $data[0]
+        ]);
     }
 
-    echo json_encode([
-        "status" => "success",
-        "data" => $data[0]
-    ]);
 
-    }
 
     //update profile put endpoint /user/profile
-
     public function updateProfile() {
 
-    $user = getAuthenticatedUser();
-    $user_id = $user->data->id;
-    $data = getJsonInput();
-    $pdo = getPDO();
+        // Get logged-in user
+        $user = getAuthenticatedUser();
 
-    $name = $data['full_name'] ?? null;
-    $password = $data['password'] ?? null;
+        // Extract user_id from JWT
+        $user_id = $user->id;
 
-    // If password exists =hash 
-    if (!empty($password)) {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-    } else {
-        $password = null; // important for SQL IF logic
-    }
+        // get json input
+        $data = getJsonInput();
 
-    // Call procedure
-    $sql = "CALL update_user_profile(?, ?, ?)";
-    $params = [$user_id, $name, $password];
+        $pdo = getPDO();
 
-    execQuery($sql, $params, $pdo);
+        // optional fields
+        $name = $data['full_name'] ?? null;
 
-    // Response
-    echo json_encode([
-        "status" => "success",
-        "message" => "Profile updated successfully"
-            ]);
+        $password = $data['password'] ?? null;
+
+
+        // If password exists = hash
+        if (!empty($password)) {
+
+            $password = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
+
         }
+
+        else {
+
+            // important for SQL IF logic
+            $password = null;
+        }
+
+
+        // Call procedure
+        $sql = "CALL update_user_profile(?, ?, ?)";
+
+        $params = [
+
+            $user_id,
+
+            $name,
+
+            $password
+        ];
+
+        execQuery(
+            $sql,
+            $params,
+            $pdo
+        );
+
+
+        // success response
+        echo json_encode([
+
+            "status" => "success",
+
+            "message" =>
+                "Profile updated successfully"
+        ]);
     }
+}

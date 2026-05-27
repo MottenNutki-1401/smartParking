@@ -52,7 +52,19 @@ elseif ($request === '/api/login' && $method === 'POST') {
     (new AuthController())->login();
 }
 
+// REGISTER
+// POST /api/auth/register
+elseif (
+    $request === '/api/auth/register'
+    &&
+    $method === 'POST'
+) {
 
+    require_once 'controllers/AuthController.php';
+
+    (new AuthController())
+        ->register();
+}
 
 //USER PROF
 elseif ($request === '/api/users/profile' && $method === 'GET') {
@@ -71,7 +83,18 @@ elseif ($request === '/api/users/profile' && $method === 'PUT') {
 
     (new UserController())->updateProfile();
 }
+// CREATE BILLING
+elseif (
+    $request === '/api/billings'
+    &&
+    $method === 'POST'
+) {
 
+    require_once 'controllers/BillingController.php';
+
+    (new BillingController())
+        ->createBilling();
+}
 //BILLING
 elseif (
     preg_match('#^/api/billings/([0-9]+)$#', $request, $matches)
