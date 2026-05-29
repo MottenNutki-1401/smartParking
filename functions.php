@@ -116,11 +116,19 @@ function execQuery(
         $stmt->closeCursor();
 
     }
+        catch (\Throwable $th) {
 
-    catch (\Throwable $th) {
+            http_response_code(403);
 
-        http_response_code(403);
-    }
+            echo json_encode([
+
+                "status" => "error",
+
+                "message" => $th->getMessage()
+            ]);
+
+            exit;
+        }
 
     return $data;
 }
