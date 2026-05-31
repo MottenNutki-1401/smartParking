@@ -62,10 +62,11 @@ class UserController {
         $pdo = getPDO();
 
         // optional fields
-        $name = $data['full_name'] ?? null;
+       $name = $data['full_name'] ?? null;
+
+        $username = $data['username'] ?? null;
 
         $password = $data['password'] ?? null;
-
 
         // If password exists = hash
         if (!empty($password)) {
@@ -85,13 +86,15 @@ class UserController {
 
 
         // Call procedure
-        $sql = "CALL update_user_profile(?, ?, ?)";
+        $sql = "CALL update_user_profile(?, ?, ?, ?)";
 
         $params = [
 
             $user_id,
 
             $name,
+              
+            $username,
 
             $password
         ];

@@ -169,6 +169,24 @@ elseif (
     (new ReportController())
         ->getRevenue();
 }
+//admin-update slots
+elseif (
+    preg_match(
+        '#^/api/admin/parking-slots/([0-9]+)$#',
+        $request,
+        $matches
+    )
+    &&
+    $method === 'PUT'
+) {
+
+    require_once 'controllers/AdminController.php';
+
+    (new AdminController())
+        ->updateParkingSlotStatus(
+            $matches[1]
+        );
+}
 else {
 
     errorResponse("Route not found", 404);

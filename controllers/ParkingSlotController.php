@@ -6,22 +6,30 @@ class ParkingSlotController {
 
     public function index() {
 
-        // Get database connection
-        $pdo = getPDO();
+    // Get database connection
+    $pdo = getPDO();
 
-        // sql procedure
-        $sql = "CALL get_pslots()";
+     //Expire old bookings first
+    execQuery(
+      "CALL expire_bookings()",
+       [],
+        $pdo
+    );
 
-        // No parameters needed
-        $params = [];
+    // Then load parking slots
+    $sql = "CALL get_pslots()";
 
-        // Execute query
-        $data = execQuery($sql, $params, $pdo);
+    $params = [];
 
-        // Return JSON response
-        echo json_encode([
-            "status" => "success",
-            "data" => $data
-        ]);
-    }
+    $data = execQuery(
+        $sql,
+        $params,
+        $pdo
+    );
+
+    echo json_encode([
+        "status" => "success",
+        "data" => $data
+    ]);
+}
 }

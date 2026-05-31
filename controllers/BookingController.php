@@ -10,13 +10,13 @@ class BookingController {
         $input = getJsonInput();
 
         // validate
-        if (
+       if (
             !isset($input['user_id']) ||
             !isset($input['parking_slot_id']) ||
-            !isset($input['time_in']) ||
-                        !isset($input['time_out']) ||
-                        !isset($input['total_amount'])
-          )
+            !isset($input['start_datetime']) ||
+            !isset($input['end_datetime']) ||
+            !isset($input['total_amount'])
+        )
         {
 
             errorResponse(
@@ -30,26 +30,87 @@ class BookingController {
         // stored procedure
         $sql = "CALL create_booking(?, ?, ?, ?, ?)";
 
-            $params = [
+           $params = [
 
-                $input['user_id'],
+            $input['user_id'],
 
-                $input['parking_slot_id'],
+            $input['parking_slot_id'],
 
-                $input['time_in'],
+            $input['start_datetime'],
 
-                $input['time_out'],
-                $input['total_amount']
+            $input['end_datetime'],
+
+            $input['total_amount']
+        ];
+
+                    $result =
+                        execQuery(
+                            $sql,
+                            $params,
+                            $pdo
+                        );
+
+            $booking_id =
+                $result[0]['booking_id'];
+
+            $ratePerHour = 35;
+
+            $hoursUsed =
+                ceil(
+                    $input['total_amount']
+                    /
+                    $ratePerHour
+                );
+
+            $rateEncrypted =
+                encryptData(
+                    $ratePerHour
+                );
+
+            $hoursEncrypted =
+                encryptData(
+                    $hoursUsed
+                );
+
+            $totalEncrypted =
+                encryptData(
+                    $input['total_amount']
+                );
+
+            $sqlBilling =
+                "CALL create_billing(
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )";
+
+            $paramsBilling = [
+
+                $booking_id,
+
+                $rateEncrypted['data'],
+                $rateEncrypted['iv'],
+                $rateEncrypted['tag'],
+
+                $hoursEncrypted['data'],
+                $hoursEncrypted['iv'],
+                $hoursEncrypted['tag'],
+
+                $totalEncrypted['data'],
+                $totalEncrypted['iv'],
+                $totalEncrypted['tag']
             ];
 
-        execQuery($sql, $params, $pdo);
+            execQuery(
+                $sqlBilling,
+                $paramsBilling,
+                $pdo
+            );
 
-        echo json_encode([
+            echo json_encode([
 
-            "status" => "success",
+                "status" => "success",
 
-            "message" =>
-                "Booking created successfully"
-        ]);
+                "message" =>
+                    "Booking created successfully"
+            ]);
     }
 }

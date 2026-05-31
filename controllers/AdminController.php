@@ -67,6 +67,43 @@ class AdminController {
         "data" => $data
         ]);
     }
+//update slots
+public function updateParkingSlotStatus($slotId) {
 
+    $input = getJsonInput();
+
+    if (!isset($input['status'])) {
+
+        errorResponse(
+            "Status required",
+            400
+        );
+    }
+
+    $pdo = getPDO();
+
+    $sql =
+        "CALL update_parking_slot_status(?, ?)";
+
+    $params = [
+
+        $slotId,
+
+        $input['status']
+    ];
+
+    execQuery(
+        $sql,
+        $params,
+        $pdo
+    );
+
+    echo json_encode([
+
+        "status" => "success",
+
+        "message" => "Slot updated"
+    ]);
+}
 
 }
